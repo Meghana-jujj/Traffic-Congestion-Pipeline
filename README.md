@@ -10,8 +10,7 @@ This project simulates real-time traffic data using Kafka and processes it using
 - 🛢️ **PostgreSQL** for storing processed data  
 - 📊 **Dashboards** in Power BI and Tableau to monitor congestion  
 - 🧱 **Modular architecture** built like a real-world project  
-- 🖼️ Includes diagrams, SQL scripts, code, and sample data  
-- 💻 All built **without AWS**, **completely offline**  
+- 🖼️ Includes diagrams, SQL scripts, code, and sample data   
 
 # Project Structure
 traffic-congestion-pipeline/
@@ -72,6 +71,10 @@ This project was created to showcase real-world data engineering skills includin
 - Building a Kafka → Spark → Database pipeline
 - Creating professional, job-ready dashboards
 - Documenting and deploying projects like a developer
+
+
+# Link to Streamlit 
+https://traffic-congestion-pipeline-sxgjydzmcptlfpzg5xzj6b.streamlit.app/
 
 ---
 
