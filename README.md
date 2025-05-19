@@ -45,20 +45,19 @@ traffic-congestion-pipeline/
 
 This project is still in development, and each step will be implemented in a separate folder with code, instructions, and visual outputs.
 
-Coming Soon:
-- [ ] ✅ Step 1: Setup Kafka, Zookeeper locally  
-- [ ] ✅ Step 2: Create sample traffic data (CSV)  
-- [ ] ✅ Step 3: Kafka Producer to stream traffic data  
-- [ ] ✅ Step 4: PySpark consumer to process data  
-- [ ] ✅ Step 5: Save output to PostgreSQL  
-- [ ] ✅ Step 6: Build Tableau/Power BI dashboards  
-- [ ] ✅ Step 7: Draw full architecture diagram  
+ ✅ Step 1: Setup Kafka, Zookeeper locally  
+ ✅ Step 2: Create sample traffic data (CSV)  
+ ✅ Step 3: Kafka Producer to stream traffic data  
+ ✅ Step 4: PySpark consumer to process data  
+ ✅ Step 5: Save output to PostgreSQL  
+ ✅ Step 6: Build Tableau/Power BI dashboards  
+ ✅ Step 7: Draw full architecture diagram  
 
 ---
 
 ## 📊 Sample Use Case
 
-Use this project to:
+This project can simulate:
 - Monitor city-wide traffic using IoT and GPS data  
 - Identify slow-moving traffic in key areas  
 - Trigger alerts when average speed drops below thresholds  
