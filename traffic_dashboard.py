@@ -1,55 +1,39 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 
-# --- App Title ---
-st.set_page_config(page_title="🚦 Traffic Data Dashboard", layout="wide")
-st.title("🚦 Real-Time Traffic Data Analysis Dashboard")
+# Load your uploaded file (adjust path if needed)
+df = pd.read_csv("traffic_sample_data_clean.csv")
 
-# --- File Upload ---
-uploaded_file = st.file_uploader("Upload your cleaned traffic CSV file", type=["csv"])
+# Preprocess timestamp
+df['timestamp'] = pd.to_datetime(df['timestamp'])
+df['hour'] = df['timestamp'].dt.hour
+df['day'] = df['timestamp'].dt.day_name()
+df['day_night'] = df['hour'].apply(lambda x: 'Night' if x < 6 or x >= 18 else 'Day')
 
-if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
-    df['hour'] = df['timestamp'].dt.hour
-    df['day_period'] = df['hour'].apply(lambda x: 'Night' if (x < 6 or x >= 18) else 'Day')
+# 1. Line Plot: Vehicle count over time (sample)
+px.line(df.head(500), x='timestamp', y='vehicle_count', title='📈 Vehicle Count Over Time').show()
 
-    # --- KPI Section ---
-    st.subheader("📊 Key Metrics")
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Total Records", f"{len(df):,}")
-    col2.metric("Average Speed", f"{df['avg_speed'].mean():.2f} km/h")
-    col3.metric("Total Vehicles", f"{df['vehicle_count'].sum():,}")
+# 2. Pie Chart: Congestion level distribution
+px.pie(df, names='congestion_level', title='🟠 Congestion Level Distribution').show()
 
-    st.markdown("---")
+# 3. Heatmap: Avg vehicle count by hour and day
+pivot = df.pivot_table(values='vehicle_count', index='day', columns='hour', aggfunc='mean').fillna(0)
+go.Figure(data=go.Heatmap(z=pivot.values, x=pivot.columns, y=pivot.index, colorscale='Viridis')) \
+    .update_layout(title='🔥 Avg Vehicle Count by Hour and Day') \
+    .show()
 
-    # --- Filter Section ---
-    st.sidebar.header("🔍 Filters")
-    locations = st.sidebar.multiselect("Select Location(s)", options=df['location'].unique(), default=df['location'].unique())
-    congestion_levels = st.sidebar.multiselect("Select Congestion Level(s)", options=df['congestion_level'].unique(), default=df['congestion_level'].unique())
+# 4. Box Plot: Speed distribution by congest
+px.box(df, x='congestion_level', y='avg_speed', title='📦 Avg Speed by Congestion Level').show()
 
-    filtered_df = df[(df['location'].isin(locations)) & (df['congestion_level'].isin(congestion_levels))]
+# 5. Histogram: Vehicle count distribution
+px.histogram(df, x='vehicle_count', nbins=50, title='🔢 Vehicle Count Distribution').show()
 
-    # --- Charts Section ---
-    st.subheader("📈 Traffic Trends")
+# 6. Bar Chart: Avg vehicle count by location
+avg_by_loc = df.groupby('location')['vehicle_count'].mean().reset_index()
+px.bar(avg_by_loc, x='location', y='vehicle_count', title='🏙️ Avg Vehicle Count by Location').show()
 
-    fig1 = px.line(filtered_df, x="timestamp", y="vehicle_count", color="location", title="📌 Vehicle Count Over Time")
-    st.plotly_chart(fig1, use_container_width=True)
-
-    fig2 = px.bar(filtered_df, x="hour", y="vehicle_count", color="day_period", title="🌓 Traffic Pattern: Day vs Night", barmode='group')
-    st.plotly_chart(fig2, use_container_width=True)
-
-    fig3 = px.scatter(filtered_df, x="avg_speed", y="vehicle_count", color="congestion_level", size="vehicle_count", hover_data=["location"], title="🚗 Speed vs Vehicle Count")
-    st.plotly_chart(fig3, use_container_width=True)
-
-    fig4 = px.pie(filtered_df, names='congestion_level', title='🥧 Congestion Level Distribution')
-    st.plotly_chart(fig4, use_container_width=True)
-
-    # --- Save Filtered Data ---
-    st.subheader("📥 Download Filtered Data")
-    csv = filtered_df.to_csv(index=False).encode('utf-8')
-    st.download_button("Download as CSV", data=csv, file_name='filtered_traffic_data.csv', mime='text/csv')
-
-else:
-    st.info("Please upload a cleaned traffic data CSV file to begin.")
+# 7. Scatter Plot: Speed vs vehicle count
+px.scatter(df.sample(1000), x='avg_speed', y='vehicle_count', color='congestion_level',
+           title='🚗 Speed vs Vehicle Count').show()
